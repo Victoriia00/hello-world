@@ -7,18 +7,19 @@
 
 const float dt = 0.01;
 
-struct Particle
+class Particle
 {
-    Vector2f position;
-    Vector2f velocity;
+    public:
+    	Vector2f position;
+    	Vector2f velocity;
 
-    void draw(sf::RenderWindow& window);
+    	void draw(sf::RenderWindow& window);
 
-    float radius = 5;
-    float mass = 1;
-    int R = 150;
-    int G = 10;
-    int B = 200;
+    	float radius = 5;
+   	float mass = 1;
+    	int R = 150;
+    	int G = 10;
+    	int B = 200;
 
 };
 
