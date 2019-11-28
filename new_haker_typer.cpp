@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <fstream>
-#include "file.cpp"
+#include "Graphics_meneger.h"
 
 
 class application
