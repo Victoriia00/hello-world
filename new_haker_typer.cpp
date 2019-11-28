@@ -9,7 +9,7 @@ class application
 public:
     char* maintext;
     char* currenttext;
-    void execute();//запуск программы
+    void execute();
     Graphic_Manager* graphic_manager = new Graphic_Manager;
 };
 
@@ -77,7 +77,7 @@ void Draw_currenttext(sf::RenderWindow* window, std::string way_to_font, std::st
 
 void rotate(sf::View* view, float Velocity)
 {
-    view->move(0, Velocity);//перемещение по х и по у
+    view->move(0, Velocity);
 }
 
 void Change_currenttext(int* counter, int* flag, char* maintext, char* currenttext, int* string_counter)
@@ -85,7 +85,7 @@ void Change_currenttext(int* counter, int* flag, char* maintext, char* currentte
 
     if (*flag == 1)
     {
-        for (int i = 0; i < 5; i++)//при каждом нажатии проверяет по 5 символов, длина блока 5
+        for (int i = 0; i < 5; i++)
         {
             if ((maintext)[i + *(counter)*5] == '\0')
             {
@@ -102,10 +102,10 @@ void Change_currenttext(int* counter, int* flag, char* maintext, char* currentte
             }
         }
 
-        (*counter)++;//увеличивает колличество написанных сиволов
+        (*counter)++;
 
     }
-    fflush(0);//мнгновенно отображает все изменения на экране
+    fflush(0);
 }
 
 
@@ -113,7 +113,7 @@ void application::execute()
 {
  
     sf::RenderWindow window(sf::VideoMode(800, 800), "c++ one love");
-    sf::View view( sf::FloatRect(0,0,800,800)); //ramka
+    sf::View view( sf::FloatRect(0,0,800,800)); 
     
     int counter = 0;
     int string_counter = 0;
@@ -155,10 +155,9 @@ void application::execute()
         }
 
         window.clear();
-        
-     
+      
         graphic_manager->drawAll(&window);
-        window.setView(view);//устанавливает текущее положение рамки
+        window.setView(view);
         window.display();
     }
 }
