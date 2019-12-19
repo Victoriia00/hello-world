@@ -28,6 +28,10 @@ public:
 		}
 	}
 
+	int operator[](const int index);
+
+	List& operator=(const List& self);
+
 	int length();
 	void pushfront(int d);
 	int popfront();
@@ -40,16 +44,76 @@ public:
 	int size = 0;
 };
 
+void print(List& l)
+{
+	for (int i = 1; i <= l.size; ++i)
+	{
+		std::cout << l[i]<< ' ';
+	}
+	std::cout << std::endl;
+}
 
 int main()
 {
-	List l;
+	List l,l1;
 	l.pushback(100);
-	l.pushback(99);
-	l.insert(98,2);
+	l.pushfront(98);
+	l.insert(99,2);
+	std::cout << "list l after pushback 100, pushfront 98, insert 98,2 " << std::endl;
+	print(l);
+	l1 = l;
+	std::cout << "list l1 after copy " << std::endl;
+	print(l1);
 	l.remove(2);
-	//std::cout << l.popback() << " "<< l.size;
+	std::cout << "list l after remove 2" << std::endl;
+	print(l);
+	std::cout << "list l1 after remove 2 in l" << std::endl;
+	print(l1);
+	l.popback();
+	std::cout << "list l after popback" << std::endl;
+	print(l);
+	std::cout << "list l1 after popback in l" << std::endl;
+	print(l1);
+	l.popfront();
+	std::cout << "list l after popfront" << std::endl;
+	print(l);
+	std::cout << "list l1 after remove in l" << std::endl;
+	print(l1);
+	
 }
+
+int List::operator[](const int index)
+{
+	if (index > size)
+	{
+		return NULL;
+	}
+
+	Node* current = first;
+	for (int i = 1; i <= index-1; ++i)
+	{
+		current = current->next;
+	}
+
+	return current->data;
+}
+
+List& List::operator=(const List& self)
+{
+	Node* current = self.first;
+	for (int i = 1; i <= self.size; ++i)
+	{
+		int b = current->data;
+		pushback(b);
+		current = current->next;
+	}
+
+	size = self.size;
+
+	return *this;
+}
+
+
 
 int List::length()
 {
@@ -69,7 +133,7 @@ int List::popfront()
 		return NULL;
 	}
 
-	int popped = first->data; 
+	int popped = first->data; //Р·РЅР°С‡РµРЅРёРµ РїРµСЂРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 	Node* temp = first;
 	first = first->next;
 	delete temp;
@@ -155,3 +219,5 @@ void List::remove(int index)
 	--size;
 	delete temp;
 }
+
+
