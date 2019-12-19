@@ -15,6 +15,11 @@ class Graphic_Manager
         int pos = 0; 
 
     public:
+    
+        ~Graphic_Manager()
+        {
+            delete[] objects;    
+        }    
         void drawAll(sf::RenderWindow* window)
         {
             for(int i = 0; i < pos ; i++)
@@ -28,6 +33,7 @@ class Graphic_Manager
             if(pos > len - 1)
             {
                 this->len = this->len * 2;
+                
                 objects = (Basic_object**) realloc(objects, this->len * sizeof(Basic_object*));
             }
             objects[this->pos] = obj;
