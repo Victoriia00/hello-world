@@ -34,7 +34,10 @@ class Graphic_Manager
             {
                 this->len = this->len * 2;
                 
-                objects = (Basic_object**) realloc(objects, this->len * sizeof(Basic_object*));
+                if (realloc(objects, this->len * sizeof(Basic_object*))!=0)
+                {
+                    objects = (Basic_object**) realloc(objects, this->len * sizeof(Basic_object*));
+                }
             }
             objects[this->pos] = obj;
             this->pos += 1;
