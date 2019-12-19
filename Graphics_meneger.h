@@ -3,11 +3,8 @@
 class Basic_object
 {
     public:
-    //virtual ~Basic_object(){}
     virtual void Draw(sf::RenderWindow* window){}
 };
-
-
 
 
 class Graphic_Manager
@@ -18,13 +15,6 @@ class Graphic_Manager
         int pos = 0; 
 
     public:
-            /*
-            ~Graphic_Manager()
-            {
-                for(int i = 0; i < pos; i++){}
-                delete[] objects;
-            }
-            */
         void drawAll(sf::RenderWindow* window)
         {
             for(int i = 0; i < pos ; i++)
@@ -51,7 +41,7 @@ class Graphic_Manager
                 if(objects[i] == obj)
                 {
                     for(int j = i; j < pos - 1; j++)
-                         objects[j] = objects[j+1];
+                        objects[j] = objects[j+1];
                      objects[pos - 1] = NULL;
                      return;
                 }
