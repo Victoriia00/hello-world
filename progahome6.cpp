@@ -4,10 +4,11 @@
 #include <iostream>
 #include <ctime>
 #include "Myvector1.h"
+#include "Graphics_meneger.h"
 
 const float dt = 0.01;
 
-class Particle
+class Particle: public Basic_object
 {
     public:
     	Vector2f position;
@@ -20,6 +21,24 @@ class Particle
     	int R = 150;
     	int G = 10;
     	int B = 200;
+	
+	void draw(sf::RenderWindow* window)
+        {
+            sf::CircleShape shape(this->r);
+        
+            for(int i = this->r;i > 0; i = i - 2)
+            {
+                int current_Red = this->red - this->red*0.85*i/this->r;
+                int current_Green = this->green - this->green*0.85*i/this->r;
+                int current_Blue = this->blue - this->blue*0.85*i/this->r;
+
+                shape.setRadius(i);
+                shape.setFillColor(sf::Color(currentRed, currentGreen, currentBlue));
+                shape.setPosition(this->Q.x - i, this->Q.y - i);
+                window->draw(shape);
+            }
+
+        }
 
 };
 
@@ -110,7 +129,7 @@ void colide_all_particles(Particle* particles)
     }
 
 }
-
+/*
 void Particle::draw(sf::RenderWindow& window )
 {
 
@@ -130,13 +149,18 @@ void DrawAllBalls(Particle* particles,sf::RenderWindow& window )
     }
 
 }
-
+*/
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
     
     Particle* particles = new Particle[100];
     initial_conditions(particles);
+    
+    Graphic_Manager manager;
+
+    for(int i = 0; i < 100; i++)
+        manager.registrate(&particles[i]);
     
     while (window.isOpen())
     {
@@ -149,11 +173,12 @@ int main()
         }
         window.clear();
         
-        DrawAllBalls(particles,window);
+        manager.drawAll(&window);
         collide_with_wall(particles);
         colide_all_particles(particles);
         //std::cout << particles[98].position.x << std::endl;
         window.display();
     }
+    delete[] particles;
     return 0;
 }
