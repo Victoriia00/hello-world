@@ -1,129 +1,152 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <fstream>
+#include <SFML/Graphics.hpp>
+#include <cstring>
+#include "Graphics_meneger.h"
 
+const int max = 100000;
+const int number = 800 / (16 + 1);
 
-class application
+class Text:public Basic_object
 {
-public:
+        public:
+        sf::Text text;
+        void Draw(sf::RenderWindow* window)
+        {
+            window->draw(text);
+        }
+        
+        void setString(char* currenttext)
+        {
+            text.setString(currenttext);
+        }
+        void build(sf::Font* font, int font_size, int x, int y, sf::Color color = sf::Color::Green)
+        {
+            text.setFont(*font);
+            text.setCharacterSize(font_size);
+            text.setFillColor(sf::Color(color));
+            text.setPosition(x, y);
+        }
 
-    std::string maintext;
-    std::string currenttext;
-    void execute();//запуск программы
 };
 
-void ReadFile(std::string filename, application* hackertyper)
+
+int file_len(std::ifstream* file)
 {
-    std::ifstream DATABASE(filename);
-    while (!DATABASE.eof())
+    file->seekg(0, file->beg); 
+    file->seekg(0, file->end);
+    int len = file->tellg();
+    file->seekg(0, file->beg);
+
+    return len;
+}
+void build_text(sf::Text* text, sf::Font* font, int font_size, int x, int y, sf::Color color = sf::Color::Green)
+{
+   text->setFont(*font);
+   text->setCharacterSize(font_size);
+   text->setFillColor(sf::Color::Green);
+   text->setPosition(x, y);
+}
+void change_Text(char* currenttext, int* flag, int* string_counter)
+{
+    if (*string_counter == number)
     {
-        std::string str;
-        std::getline(DATABASE, str);
-        hackertyper->maintext += str;
-        hackertyper->maintext += "\n";
-    }
-
-}
-
-void Draw_currenttext(sf::RenderWindow* window, std::string way_to_font, std::string currenttext)
-{
-    sf::Font font;
-    font.loadFromFile(way_to_font);
-
-    sf::Text text(currenttext, font, 19);
-
-    text.setOutlineColor(sf::Color::Green);
-    text.setFillColor(sf::Color::Green);
-
-    text.setPosition(0, 0);
-    window->draw(text);
-
-}
-
-void rotate(sf::View* view, float Velocity)
-{
-    view->move(0, Velocity);//перемещение по х и по у
-}
-
-void Change_currenttext(int* counter, int* flag, std::string* maintext, std::string* currenttext)
-{
-
-    if (*flag == 1)
-    {
-        for (int i = 0; i < 5; i++)//при каждом нажатии проверяет по 5 символов, длина блока 5
-        {
-            if ((*maintext)[i + *(counter)*5] == *"\0")
+        int position = 0;
+        for(int i = 0; i < max; i++) 
+            if(currenttext[i] == '\n')
             {
-                *flag = 5;
+                position = i;
                 break;
             }
-            else
-            {
-                *currenttext += (*maintext)[i + (*counter)*5];
-            }
-        }
-
-        (*counter)++;//увеличивает колличество написанных сиволов
-
-    }
-    fflush(0);//мнгновенно отображает все изменения на экране
-}
-
-
-void application::execute()
-{
-    sf::RenderWindow window(sf::VideoMode(800, 800), "c++ one love");
-    sf::View view( sf::FloatRect(0,0,800,800)); //ramka
-
-    int counter = 0;
-    int flag = 1;
-    float Velocity = 8.5;
-    while(window.isOpen())
-    {
-        sf::Event event;
-        while(window.pollEvent(event))
+        
+        for(int i = 0; i <= *flag - position - 1; i++)
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
-
-            if (event.type == sf::Event::KeyPressed)
-            {
-                if (event.key.code == sf::Keyboard::Up)
-                {
-                    rotate(&view, -Velocity);
-                }
-                else if (event.key.code == sf::Keyboard::Down)
-                {
-                    rotate(&view, Velocity);
-                }
-                else
-                {
-                    Change_currenttext(&counter, &flag, &maintext, &currenttext);
-                }
-
-            }
+            currenttext[i] = currenttext[i + position + 1];
         }
-
-        window.clear();
-
-        Draw_currenttext(&window, "arial.ttf", currenttext);
-
-        window.setView(view);//устанавливает текущее положение рамки
-        window.display();
+        for(int i = *flag - position; i <= *flag; i++)
+            currenttext[i] = ' ';
+        
+        *flag = *flag - position - 1 ;
+        *string_counter = *string_counter - 1;
+        
     }
 }
+
+void refresh_currenttext(int* flag, int* string_counter, int* text_counter, int t_len, char* currenttext, char* buffer)
+{
+    for(int i = 0; i < 3; i++)
+    {   
+        if(*text_counter != t_len - 1)
+           { 
+            currenttext[*flag + 1] = buffer[*text_counter + 1]; 
+            if(buffer[*text_counter + 1] == '\n')
+                *string_counter += 1;
+            *text_counter += 1;
+            *flag += 1;
+            change_Text(currenttext, flag, string_counter);
+           }
+    }
+}
+
 
 
 int main()
 {
 
-    application haker_typer;
-    ReadFile("main.cpp", &haker_typer);
-    haker_typer.execute();
+    sf::RenderWindow window(sf::VideoMode(800, 800), "c++ one love");
+    Text text;
+    sf::Font font; 
+    font.loadFromFile("arial.ttf");
+    text.build(&font, 16, 0, 0, sf::Color::Green);                                   
 
-    return 0;
+    std::ifstream file;  
+    file.open("1.txt");
+    int len = file_len(&file);
+    char* buffer = new char[len];
+    file.read(buffer, len);
+    file.close();
+
+    int flag = -1;
+    int string_counter = 0;
+    int text_counter = -1;
+
+    char *currenttext = new char [800/16 * 800/16];
+    memset(currenttext, ' ', 800/ 16 * 800 / 16 );
+
+    Graphic_Manager manager;
+    manager.registrate(&text);
+
+    sf::Event event;
+    bool update = false;
+
+    while (window.isOpen())
+    {
+        while (window.pollEvent(event))
+		{
+		    if (event.type == sf::Event::Closed) 
+                  window.close();
+			if (event.type == sf::Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::Escape)
+                    window.close();
+
+                update = true;
+			}
+		}
+        if(update)
+        {
+            refresh_currenttext(&flag, &string_counter, &text_counter, len, currenttext, buffer);
+            text.setString(currenttext);
+            update = false;
+        }
+
+        window.clear();
+        manager.drawAll(&window);
+        window.display();
+
+    }
+
+    delete[] buffer;
+    delete[] currenttext;
+
 }
-
-
-
-
