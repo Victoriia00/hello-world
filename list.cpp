@@ -100,6 +100,10 @@ int List::operator[](const int index)
 
 List& List::operator=(const List& self)
 {
+    while (size!=0)
+		{
+			popfront();
+		}
 	Node* current = self.first;
 	for (int i = 1; i <= self.size; ++i)
 	{
@@ -133,7 +137,7 @@ int List::popfront()
 		return NULL;
 	}
 
-	int popped = first->data; //Р·РЅР°С‡РµРЅРёРµ РїРµСЂРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
+	int popped = first->data; 
 	Node* temp = first;
 	first = first->next;
 	delete temp;
@@ -219,5 +223,3 @@ void List::remove(int index)
 	--size;
 	delete temp;
 }
-
-
